@@ -373,14 +373,20 @@ const Contact = () => {
                   {
                     name: "LinkedIn",
                     icon: FiLinkedin,
-                    href: "https://linkedin.com/in/pandirichandu",
+                    href: "https://www.linkedin.com/in/pandiri-chandu-18719b2b6/",
                     color: "hover:text-blue-400 hover:border-blue-400",
                   },
                   {
                     name: "LeetCode",
                     icon: SiLeetcode,
-                    href: "https://leetcode.com/u/Pandiri_Chandu/",
+                    href: "https://leetcode.com/u/chandupandiri265/",
                     color: "hover:text-orange-500 hover:border-orange-500",
+                  },
+                  {
+                    name: "CodeChef",
+                    icon: SiCodechef,
+                    href: "https://www.codechef.com/users/chandupandiri1",
+                    color: "hover:text-amber-600 hover:border-amber-600",
                   },
                 ].map((social, idx) => (
                   <a
