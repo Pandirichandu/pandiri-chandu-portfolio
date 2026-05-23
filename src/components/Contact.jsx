@@ -10,6 +10,7 @@ import {
   FiLoader,
 } from "react-icons/fi";
 import { SiLeetcode } from "react-icons/si";
+import { SiCodechef } from "react-icons/si";
 import emailjs from "@emailjs/browser";
 import toast from "react-hot-toast";
 import {
