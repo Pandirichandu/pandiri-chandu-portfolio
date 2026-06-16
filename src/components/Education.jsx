@@ -4,7 +4,7 @@ const educationData = [
   {
     institution: "GMR Institute of Technology",
     degree: "B.Tech in Computer Science and Engineering",
-    score: "CGPA: 8.5525",
+    score: "CGPA: 8.01",
     year: "2022 – 2026",
     color: "from-cyan-400 to-blue-500",
   },
