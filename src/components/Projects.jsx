@@ -21,7 +21,7 @@ const otherProjects = [
     tech: ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
     image: chessImg,
     github: "https://github.com/Pandirichandu/Chess-Game",
-    live: "https://pc-chess.vercel.app/",
+    live: "https://chess-game-two-sigma.vercel.app/",
     architecture:
       "The application leverages a decoupled state management system interacting with a custom validation engine and notation parser. An asynchronous Web Worker handles CPU-heavy Stockfish engine calculations off the main thread to ensure high-performance UI rendering.",
     challenges: [
