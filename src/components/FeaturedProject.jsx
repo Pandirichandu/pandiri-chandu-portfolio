@@ -22,7 +22,7 @@ const FeaturedProject = () => {
     tech: ["React.js", "Django", "MySQL", "REST APIs", "Framer Motion"],
     github:
       "https://github.com/Pandirichandu/MealMatrix_Smart_Food_Management_System",
-    live: "#",
+    live: "https://meal-matrix-smart-food-management-s.vercel.app/",
     architecture:
       "The system is built on a distributed architecture. The React frontend communicates with a Django REST API backend. A MySQL database ensures data integrity, while a caching layer handles high-frequency reads for the analytics dashboard.",
     challenges: [
@@ -75,7 +75,9 @@ const FeaturedProject = () => {
               <FiGithub size={18} /> View Source
             </a>
             <a
-              href="#"
+              href={mealMatrixProject.live}
+              target="_blank"
+              rel="noreferrer"
               className="flex items-center gap-2 text-sm text-cyan-400 hover:text-cyan-300 transition-colors"
             >
               Live Demo <FiExternalLink size={18} />
@@ -182,7 +184,9 @@ const FeaturedProject = () => {
                 Source Code
               </a>
               <a
-                href="#"
+                href={mealMatrixProject.live}
+                target="_blank"
+                rel="noreferrer"
                 className="flex-1 py-3 text-center rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-sm font-medium hover:bg-cyan-500/20 transition-colors"
               >
                 Live Demo
