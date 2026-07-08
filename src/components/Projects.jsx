@@ -9,8 +9,35 @@ import {
 } from "../utils/motionVariants";
 import intelliViewImg from "../assets/projects/intelliview.png";
 import aiWarfareImg from "../assets/projects/aiwarfare.png";
+import chessImg from "../assets/projects/chess.png";
 
 const otherProjects = [
+  {
+    title: "PC CHESS — Grandmaster Engine Suite",
+    description:
+      "A high-performance chess platform featuring Stockfish 15 engine integration, real-time board evaluation, multiple game modes, and a full analysis sandbox.",
+    fullDescription:
+      "PC CHESS is an advanced, offline-first interactive chess application designed for gameplay, training, and deep board analysis. It features custom chess rules validation, a multi-skin interactive chessboard, and an analytics dashboard.",
+    tech: ["React.js", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    image: chessImg,
+    github: "https://github.com/Pandirichandu/Chess-Game",
+    live: "https://pc-chess.vercel.app/",
+    architecture:
+      "The application leverages a decoupled state management system interacting with a custom validation engine and notation parser. An asynchronous Web Worker handles CPU-heavy Stockfish engine calculations off the main thread to ensure high-performance UI rendering.",
+    challenges: [
+      "Executing CPU-heavy Stockfish evaluations in background Web Worker threads to preserve 60 FPS UI rendering.",
+      "Developing a bug-free, pure TypeScript move validation engine handling en passant, castling rights, and complex draws.",
+      "Designing a responsive, gesture-friendly chess grid supporting responsive layouts and tactile sound feedback.",
+    ],
+    features: [
+      "Real-time Stockfish AI opponent matches",
+      "Live centipawn evaluation & blunder categorization",
+      "Analysis sandbox with FEN/PGN import/export",
+      "PWA support for fully offline-first capabilities",
+    ],
+    scalability:
+      "The stateless game controller and notation system support instant multiplayer syncing. Heavy assets and audio files are cached locally via a registered service worker for rapid loading.",
+  },
   {
     title: "Intelli View (AI Mock Interview)",
     description:
