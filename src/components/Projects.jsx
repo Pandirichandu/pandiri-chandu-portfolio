@@ -47,7 +47,7 @@ const otherProjects = [
     tech: ["React.js", "Python", "NLP APIs", "Speech Processing"],
     image: intelliViewImg,
     github: "https://github.com/Pandirichandu/Ai-powered-Mock-interview",
-    live: "#",
+    live: "https://intelliview-frontend.onrender.com",
     architecture:
       "Frontend built with React.js captures audio and streams it to a Python FastAPI backend. The backend processes the audio using Whisper API for transcription, and Hugging Face Transformers for sentiment and semantic analysis.",
     challenges: [
@@ -192,7 +192,7 @@ const Projects = () => {
                     <FiFolder size={24} />
                   </div>
                   <div className="flex gap-4">
-                    {project.github && (
+                    {project.github && project.github !== "#" && (
                       <a
                         href={project.github}
                         onClick={(e) => e.stopPropagation()}
@@ -203,7 +203,7 @@ const Projects = () => {
                         <FiGithub size={20} />
                       </a>
                     )}
-                    {project.live && (
+                    {project.live && project.live !== "#" && (
                       <a
                         href={project.live}
                         onClick={(e) => e.stopPropagation()}
