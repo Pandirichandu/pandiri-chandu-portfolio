@@ -242,7 +242,7 @@ const Projects = () => {
 
         <motion.div variants={childVariants} className="text-center mt-12">
           <a
-            href="https://github.com"
+            href="https://github.com/Pandirichandu?tab=repositories"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors border-b border-cyan-400/30 hover:border-cyan-400 pb-1"
