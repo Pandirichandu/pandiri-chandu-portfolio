@@ -302,11 +302,25 @@ export async function fetchLiveStats() {
 
         const ratingMatch  = html.match(/rating-number[^>]*>(\d+)/i);
         const highestMatch = html.match(/\(Highest Rating\s*(\d+)\)/i) || html.match(/Highest Rating[^\d]*(\d+)/i);
-        const solvedMatch  = html.match(/Fully Solved\s*\(([0-9]+)\)/i);
+        const solvedMatch  = html.match(/Fully Solved\s*\(([0-9]+)\)/i) || html.match(/Total Problems Solved[^\d]*(\d+)/i);
         const dailyMatch   = html.match(/var\s+userDailySubmissionsStats\s*=\s*(\[[\s\S]*?\]);/i);
+        const allRatingMatch = html.match(/var\s+all_rating\s*=\s*(\[[\s\S]*?\]);/i);
 
-        if (ratingMatch?.[1])  results.codechef.currentRating  = parseInt(ratingMatch[1]);
-        if (highestMatch?.[1]) results.codechef.highestRating  = parseInt(highestMatch[1]);
+        if (allRatingMatch?.[1]) {
+          try {
+            const ratings = JSON.parse(allRatingMatch[1]);
+            if (ratings.length > 0) {
+              const current = parseInt(ratings[ratings.length - 1]?.rating);
+              const highest = Math.max(...ratings.map((r) => parseInt(r.rating) || 0));
+              if (current > 0) results.codechef.currentRating = current;
+              if (highest > 0) results.codechef.highestRating = highest;
+            }
+          } catch {}
+        } else {
+          if (ratingMatch?.[1])  results.codechef.currentRating  = parseInt(ratingMatch[1]);
+          if (highestMatch?.[1]) results.codechef.highestRating  = parseInt(highestMatch[1]);
+        }
+
         if (solvedMatch?.[1])  results.codechef.problemsSolved = parseInt(solvedMatch[1]);
 
         if (dailyMatch?.[1]) {
