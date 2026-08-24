@@ -11,12 +11,19 @@ const CustomCursor = () => {
     };
 
     const handleMouseOver = (e) => {
+      const target = e.target;
+      if (!target || !(target instanceof Element)) {
+        setIsHovering(false);
+        return;
+      }
+
       if (
-        e.target.tagName.toLowerCase() === "button" ||
-        e.target.tagName.toLowerCase() === "a" ||
-        e.target.closest("button") ||
-        e.target.closest("a") ||
-        e.target.classList.contains("interactive")
+        target.tagName.toLowerCase() === "button" ||
+        target.tagName.toLowerCase() === "a" ||
+        target.closest("button") ||
+        target.closest("a") ||
+        target.classList?.contains("interactive") ||
+        target.closest(".interactive")
       ) {
         setIsHovering(true);
       } else {

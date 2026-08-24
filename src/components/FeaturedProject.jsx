@@ -112,16 +112,16 @@ const FeaturedProject = () => {
             <motion.div
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-              className="absolute -right-6 -bottom-6 glass-card p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-4 bg-black/80 z-20 pointer-events-none"
+              className="absolute right-2 -bottom-4 sm:-right-6 sm:-bottom-6 glass-card p-3 sm:p-4 rounded-xl border border-white/10 shadow-2xl flex items-center gap-3 sm:gap-4 bg-black/80 z-20 pointer-events-none"
             >
-              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
-                <FiUsers className="text-green-400" />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-green-500/20 flex items-center justify-center border border-green-500/30">
+                <FiUsers className="text-green-400 text-sm sm:text-base" />
               </div>
               <div>
-                <div className="text-sm text-gray-400 font-mono">
+                <div className="text-xs sm:text-sm text-gray-400 font-mono">
                   Active Users
                 </div>
-                <div className="text-xl font-bold">100+</div>
+                <div className="text-lg sm:text-xl font-bold">100+</div>
               </div>
             </motion.div>
           </motion.div>

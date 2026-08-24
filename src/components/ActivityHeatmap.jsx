@@ -1,54 +1,99 @@
 import { useState, useMemo } from "react";
 
 /**
- * Custom 52-Week Activity Heatmap Calendar Grid
- * Generates an interactive GitHub-style contribution matrix for LeetCode, CodeChef, GitHub, etc.
+ * Pixel-Perfect Contribution Calendar Heatmap
+ * Exactly matches GitHub / LeetCode / CodeChef contribution grids:
+ * - 52 Sunday-to-Saturday week columns
+ * - Month labels placed in absolute pixel alignment directly above their corresponding week column
+ * - Mon, Wed, Fri day labels aligned to rows 1, 3, 5
+ * - Precise tooltips showing exact contribution count and full formatted date
+ * - Responsive horizontal scrolling with custom scrollbar
+ * - Real activity only: empty days remain empty; no fake/mock entries.
  */
+
+const CELL_SIZE = 11; // 11px cell width & height
+const CELL_GAP = 3;  // 3px gap between cells
+const COL_WIDTH = CELL_SIZE + CELL_GAP; // 14px per column
+const DAY_LABEL_WIDTH = 30; // 30px width for Mon/Wed/Fri labels
+
 const ActivityHeatmap = ({
   activityMap = {},
-  colorLevels = ["#161b22", "#0e3a43", "#007085", "#06b6d4", "#22d3ee"],
-  unitName = "submissions",
+  isLoading = false,
+  isError = false,
+  colorLevels = ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"],
+  unitName = "contributions",
   totalLabel = "",
+  platform = "github",
 }) => {
-  const [hoveredCell, setHoveredCell] = useState(null);
+  const [tooltip, setTooltip] = useState(null);
 
-  // Generate 52 weeks of dates ending at today
-  const { weeks, monthLabels, totalCountCalculated } = useMemo(() => {
-    const today = new Date();
-    // Move to end of current week (Saturday)
-    const endDate = new Date(today);
-    endDate.setDate(today.getDate() + (6 - today.getDay()));
+  // Build calendar matrix ending on the current week's Saturday
+  const { weeks, monthLabels, totalCount } = useMemo(() => {
+    const safeMap = activityMap && typeof activityMap === "object" ? activityMap : {};
+    const now = new Date();
+    
+    // Format YYYY-MM-DD in local time
+    const formatYMD = (d) => {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
 
-    // 52 weeks = 364 days
-    const startDate = new Date(endDate);
-    startDate.setDate(endDate.getDate() - 363);
+    const todayStr = formatYMD(now);
+
+    // End on Saturday of the current week (day 6)
+    const endOfWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (6 - now.getDay()));
+    
+    // 52 full weeks = 52 * 7 = 364 days.
+    // Start date is (endOfWeek - 363 days), which is always a Sunday.
+    const startDate = new Date(endOfWeek.getFullYear(), endOfWeek.getMonth(), endOfWeek.getDate() - 363);
 
     const weeksArr = [];
     let currentWeek = [];
     const months = [];
-    let lastMonth = -1;
+    let lastMonthNum = -1;
+    let lastMonthCol = -999;
     let sumCount = 0;
 
-    const cur = new Date(startDate);
+    const cur = new Date(startDate.getTime());
 
-    while (cur <= endDate) {
-      const dateStr = cur.toISOString().split("T")[0];
-      const count = activityMap[dateStr] || 0;
+    for (let dayIdx = 0; dayIdx < 364; dayIdx++) {
+      const dateStr = formatYMD(cur);
+      const isFuture = dateStr > todayStr;
+      const rawCount = safeMap[dateStr];
+      const count = !isFuture && typeof rawCount === "number" && !isNaN(rawCount) ? rawCount : 0;
       sumCount += count;
 
+      const colIdx = weeksArr.length;
       const monthNum = cur.getMonth();
-      if (monthNum !== lastMonth) {
-        months.push({
-          name: cur.toLocaleDateString("en-US", { month: "short" }),
-          weekIndex: weeksArr.length,
-        });
-        lastMonth = monthNum;
+
+      // If month changes, check if we should add a label for this month
+      if (monthNum !== lastMonthNum) {
+        const daysUntilNextMonth = new Date(cur.getFullYear(), cur.getMonth() + 1, 1) - cur;
+        const weeksUntilNextMonth = Math.floor(daysUntilNextMonth / (7 * 86400000));
+
+        if (dayIdx === 0 && weeksUntilNextMonth < 2) {
+          // Skip partial tail month at the very start
+        } else if (colIdx - lastMonthCol >= 2 && colIdx < 51) {
+          const isCurrentMonth = cur.getFullYear() === now.getFullYear() && monthNum === now.getMonth();
+          const monthName = cur.toLocaleDateString("en-US", { month: "short" });
+          months.push({
+            name: isCurrentMonth ? `${monthName} '${String(cur.getFullYear()).slice(-2)}` : monthName,
+            colIndex: colIdx,
+            isCurrent: isCurrentMonth,
+          });
+          lastMonthCol = colIdx;
+        }
+        lastMonthNum = monthNum;
       }
 
       currentWeek.push({
         date: dateStr,
         count,
+        isFuture,
         formattedDate: cur.toLocaleDateString("en-US", {
+          weekday: "short",
           month: "short",
           day: "numeric",
           year: "numeric",
@@ -70,115 +115,184 @@ const ActivityHeatmap = ({
     return {
       weeks: weeksArr,
       monthLabels: months,
-      totalCountCalculated: sumCount,
+      totalCount: sumCount,
     };
   }, [activityMap]);
 
-  // Determine color index (0 to 4) based on activity count
-  const getColorLevel = (count) => {
-    if (!count || count === 0) return 0;
+  // Color intensity mapping
+  const getColorLevel = (count, isFuture) => {
+    if (isFuture || !count || count === 0) return 0;
     if (count === 1) return 1;
     if (count <= 3) return 2;
     if (count <= 6) return 3;
     return 4;
   };
 
+  const totalGridWidth = weeks.length * COL_WIDTH;
+  const hasData = Object.keys(activityMap || {}).length > 0;
+
   return (
-    <div className="relative flex flex-col items-center justify-center w-full">
-      {/* Month Labels Header */}
-      <div className="w-full flex justify-between text-[11px] text-gray-400 mb-2 px-1 font-mono">
-        {monthLabels.slice(0, 12).map((m, idx) => (
-          <span key={idx} className="truncate">
-            {m.name}
-          </span>
-        ))}
+    <div className={`w-full select-none transition-opacity duration-300 ${isLoading ? "opacity-60" : "opacity-100"}`}>
+      {/* Mobile Swipe Hint */}
+      <div className="sm:hidden text-[10px] text-gray-400 font-mono text-right mb-1.5 flex items-center justify-end gap-1">
+        <span>← Swipe to see full year →</span>
       </div>
 
-      {/* Grid Container */}
-      <div className="relative overflow-x-auto custom-scrollbar w-full pb-2">
-        <div className="flex gap-[3.5px] items-center min-w-[650px] justify-between">
-          {/* Day Labels Column */}
-          <div className="flex flex-col justify-between text-[10px] text-gray-500 font-mono pr-2 h-[88px] shrink-0">
-            <span>Mon</span>
-            <span>Wed</span>
-            <span>Fri</span>
+      {/* Synchronized Scroll Container */}
+      <div className="overflow-x-auto custom-scrollbar w-full pb-2" style={{ WebkitOverflowScrolling: "touch" }}>
+        <div style={{ width: totalGridWidth + DAY_LABEL_WIDTH + 16, minWidth: "100%" }}>
+          
+          {/* ── Month Labels Row (Pixel-Aligned to Week Columns) ── */}
+          <div
+            className="relative h-[16px] mb-1 font-mono text-[11px]"
+            style={{ marginLeft: DAY_LABEL_WIDTH }}
+          >
+            {monthLabels.map((m, i) => (
+              <span
+                key={i}
+                className={`absolute top-0 transition-colors ${
+                  m.isCurrent
+                    ? "text-cyan-400 font-bold"
+                    : "text-gray-400"
+                }`}
+                style={{
+                  left: m.colIndex * COL_WIDTH,
+                }}
+              >
+                {m.name}
+              </span>
+            ))}
           </div>
 
-          {/* 52 Weeks Grid Columns */}
-          <div className="flex gap-[3.5px] flex-grow justify-between">
-            {weeks.map((week, wIdx) => (
-              <div key={wIdx} className="flex flex-col gap-[3.5px]">
-                {week.map((day, dIdx) => {
-                  const level = getColorLevel(day.count);
-                  const bg = colorLevels[level] || colorLevels[0];
+          {/* ── Calendar Grid ── */}
+          <div className="flex items-start">
+            
+            {/* Day of Week Labels (Mon, Wed, Fri) */}
+            <div
+              className="flex flex-col justify-between shrink-0 font-mono text-[10px] text-gray-400 pr-1.5 select-none"
+              style={{
+                width: DAY_LABEL_WIDTH,
+                height: 7 * CELL_SIZE + 6 * CELL_GAP, // 7 cells + 6 gaps = 95px
+                paddingTop: CELL_SIZE + CELL_GAP - 2, // Align Mon with row index 1
+                paddingBottom: CELL_SIZE + CELL_GAP - 2, // Align Fri with row index 5
+              }}
+            >
+              <span style={{ lineHeight: `${CELL_SIZE}px` }}>Mon</span>
+              <span style={{ lineHeight: `${CELL_SIZE}px` }}>Wed</span>
+              <span style={{ lineHeight: `${CELL_SIZE}px` }}>Fri</span>
+            </div>
 
-                  return (
-                    <div
-                      key={dIdx}
-                      onMouseEnter={(e) => {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        setHoveredCell({
-                          ...day,
-                          x: rect.left + rect.width / 2,
-                          y: rect.top - 10,
-                        });
-                      }}
-                      onMouseLeave={() => setHoveredCell(null)}
-                      className="w-[11px] h-[11px] rounded-[2.5px] transition-all duration-200 hover:scale-125 hover:z-20 cursor-pointer shadow-sm"
-                      style={{
-                        backgroundColor: bg,
-                        boxShadow:
-                          level > 0
-                            ? `0 0 6px ${bg}60`
-                            : "none",
-                      }}
-                    />
-                  );
-                })}
+            {/* 52 Week Columns */}
+            <div
+              className="flex"
+              style={{
+                gap: `${CELL_GAP}px`,
+                width: totalGridWidth,
+              }}
+            >
+              {weeks.map((week, wIdx) => (
+                <div
+                  key={wIdx}
+                  className="flex flex-col"
+                  style={{ gap: `${CELL_GAP}px` }}
+                >
+                  {week.map((day, dIdx) => {
+                    const level = getColorLevel(day.count, day.isFuture);
+                    const bg = colorLevels[level] || colorLevels[0];
+
+                    return (
+                      <div
+                        key={dIdx}
+                        style={{
+                          width: CELL_SIZE,
+                          height: CELL_SIZE,
+                          borderRadius: 2,
+                          backgroundColor: bg,
+                          outline: "1px solid rgba(255, 255, 255, 0.05)",
+                          cursor: day.isFuture ? "default" : "pointer",
+                          opacity: day.isFuture ? 0.3 : 1,
+                        }}
+                        className={`transition-transform duration-100 ${
+                          !day.isFuture ? "hover:scale-125 hover:z-20" : ""
+                        }`}
+                        onMouseEnter={(e) => {
+                          if (day.isFuture) return;
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          setTooltip({
+                            count: day.count,
+                            dateStr: day.formattedDate,
+                            x: rect.left + rect.width / 2,
+                            y: rect.top,
+                          });
+                        }}
+                        onMouseLeave={() => setTooltip(null)}
+                      />
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Footer: Total count & Color Legend ── */}
+          <div
+            className="flex items-center justify-between mt-3 text-xs text-gray-400"
+            style={{ marginLeft: DAY_LABEL_WIDTH, maxWidth: totalGridWidth }}
+          >
+            <span className="font-sans">
+              {totalLabel || `${totalCount} ${unitName} in the last year`}
+            </span>
+
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-gray-400">
+              <span>Less</span>
+              <div className="flex gap-[3px]">
+                {colorLevels.map((lvlColor, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      width: 10,
+                      height: 10,
+                      borderRadius: 2,
+                      backgroundColor: lvlColor,
+                      outline: "1px solid rgba(255, 255, 255, 0.08)",
+                    }}
+                  />
+                ))}
               </div>
-            ))}
+              <span>More</span>
+            </div>
           </div>
+
+          {/* ── Honest Live Sync Status Note if API is unavailable ── */}
+          {isError && !hasData && (
+            <div className="mt-2 text-[11px] text-amber-400/80 font-mono flex items-center gap-1.5" style={{ marginLeft: DAY_LABEL_WIDTH }}>
+              <span>⚠️ Live activity sync temporarily unavailable from platform API.</span>
+            </div>
+          )}
+
         </div>
       </div>
 
-      {/* Footer Info: Total Count & Color Legend */}
-      <div className="w-full flex flex-col sm:flex-row items-center justify-between mt-3 text-xs text-gray-400 gap-2">
-        <span>
-          {totalLabel || `${totalCountCalculated} ${unitName} in the last year`}
-        </span>
-
-        {/* Legend */}
-        <div className="flex items-center gap-1.5 text-[11px] text-gray-500 font-mono">
-          <span>Less</span>
-          <div className="flex gap-1">
-            {colorLevels.map((lvlColor, idx) => (
-              <div
-                key={idx}
-                className="w-2.5 h-2.5 rounded-[2px]"
-                style={{ backgroundColor: lvlColor }}
-              />
-            ))}
-          </div>
-          <span>More</span>
-        </div>
-      </div>
-
-      {/* Floating Hover Tooltip */}
-      {hoveredCell && (
+      {/* ── Floating Tooltip (GitHub / LeetCode style) ── */}
+      {tooltip && (
         <div
-          className="fixed z-[99999] pointer-events-none whitespace-nowrap bg-gray-900/95 text-white text-xs px-3 py-2 rounded-xl shadow-2xl border border-cyan-500/40 backdrop-blur-md font-sans flex flex-col items-center gap-0.5"
+          className="fixed z-[99999] pointer-events-none"
           style={{
-            left: `${hoveredCell.x}px`,
-            top: `${hoveredCell.y - 6}px`,
+            left: tooltip.x,
+            top: tooltip.y - 8,
             transform: "translate(-50%, -100%)",
           }}
         >
-          <span className="font-semibold text-cyan-300">
-            {hoveredCell.count > 0
-              ? `${hoveredCell.count} ${unitName}`
-              : `No ${unitName}`}
-          </span>
-          <span className="text-[10px] text-gray-400">{hoveredCell.formattedDate}</span>
+          <div className="bg-[#1b1f23] border border-[#30363d] rounded-md px-2.5 py-1.5 text-xs text-[#e6edf3] shadow-2xl font-mono whitespace-nowrap flex flex-col items-center gap-0.5 backdrop-blur-md">
+            <span className="font-semibold" style={{ color: colorLevels[4] }}>
+              {tooltip.count > 0
+                ? `${tooltip.count} ${unitName}`
+                : `No ${unitName}`}
+            </span>
+            <span className="text-[10px] text-gray-400">
+              {tooltip.dateStr}
+            </span>
+          </div>
         </div>
       )}
     </div>

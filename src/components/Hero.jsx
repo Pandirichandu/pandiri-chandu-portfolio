@@ -76,32 +76,32 @@ const Hero = () => {
             <span className="text-green-400">Ready</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-tight">
             Hi, I'm <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
               Pandiri Chandu
             </span>
           </h1>
 
-          <div className="text-2xl md:text-3xl font-light text-gray-300 h-10 flex items-center gap-2">
+          <div className="text-xl sm:text-2xl md:text-3xl font-light text-gray-300 min-h-[2.5rem] flex items-center gap-2">
             <span>I am a</span>
             <span className="font-semibold text-white">{text}</span>
             <motion.span
               animate={{ opacity: [1, 0] }}
               transition={{ repeat: Infinity, duration: 0.8 }}
-              className="w-1 h-8 bg-cyan-400 inline-block"
+              className="w-1 h-6 sm:h-8 bg-cyan-400 inline-block shrink-0"
             />
           </div>
 
-          <p className="text-gray-400 text-lg max-w-xl leading-relaxed">
+          <p className="text-gray-400 text-base md:text-lg max-w-xl leading-relaxed">
             Building scalable AI-powered web applications and modern full-stack
             systems with real-world impact.
           </p>
 
-          <div className="flex flex-wrap gap-4 mt-4">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-4 mt-2 sm:mt-4">
             <a
               href="#projects"
-              className="interactive relative px-8 py-3 bg-white text-black font-bold rounded-full overflow-hidden group transition-transform hover:scale-105"
+              className="interactive relative px-6 sm:px-8 py-3 bg-white text-black font-bold rounded-full overflow-hidden group transition-transform hover:scale-105 text-sm sm:text-base"
             >
               <span className="relative z-10 flex items-center gap-2">
                 View Projects{" "}
@@ -111,24 +111,26 @@ const Hero = () => {
             <a
               href="/resume.pdf"
               target="_blank"
-              className="interactive px-8 py-3 glass-card text-white font-semibold rounded-full border border-white/20 hover:bg-white/10 hover:border-cyan-400 transition-all flex items-center gap-2"
+              className="interactive px-6 sm:px-8 py-3 glass-card text-white font-semibold rounded-full border border-white/20 hover:bg-white/10 hover:border-cyan-400 transition-all flex items-center gap-2 text-sm sm:text-base"
             >
               <FiDownload /> Download Resume
             </a>
-            <div className="flex gap-4 ml-2">
+            <div className="flex gap-3 sm:gap-4">
               <a
                 href="#contact"
                 className="interactive p-3 glass-card rounded-full hover:text-cyan-400 transition-colors border border-white/10 hover:border-cyan-400"
+                aria-label="Contact me"
               >
-                <FiMail size={22} />
+                <FiMail size={20} />
               </a>
               <a
                 href="https://github.com/Pandirichandu"
                 target="_blank"
                 rel="noreferrer"
                 className="interactive p-3 glass-card rounded-full hover:text-purple-400 transition-colors border border-white/10 hover:border-purple-400"
+                aria-label="GitHub profile"
               >
-                <FiGithub size={22} />
+                <FiGithub size={20} />
               </a>
             </div>
           </div>
@@ -139,22 +141,22 @@ const Hero = () => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
-          className="relative flex justify-center items-center h-[400px] md:h-[500px]"
+          className="relative flex justify-center items-center h-[340px] sm:h-[400px] md:h-[500px]"
         >
           {/* Animated Glow Rings */}
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-            className="absolute w-[320px] h-[320px] md:w-[420px] md:h-[420px] rounded-full border border-cyan-500/30 border-dashed"
+            className="absolute w-[260px] h-[260px] sm:w-[320px] sm:h-[320px] md:w-[420px] md:h-[420px] rounded-full border border-cyan-500/30 border-dashed pointer-events-none"
           />
           <motion.div
             animate={{ rotate: -360 }}
             transition={{ repeat: Infinity, duration: 25, ease: "linear" }}
-            className="absolute w-[360px] h-[360px] md:w-[480px] md:h-[480px] rounded-full border border-purple-500/20 border-dotted"
+            className="absolute w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] md:w-[480px] md:h-[480px] rounded-full border border-purple-500/20 border-dotted pointer-events-none"
           />
 
           {/* Profile Image Container */}
-          <div className="relative w-64 h-64 md:w-80 md:h-80 rounded-full p-2 bg-gradient-to-tr from-cyan-400 to-purple-600 shadow-[0_0_40px_rgba(0,255,255,0.3)]">
+          <div className="relative w-52 h-52 sm:w-64 sm:h-64 md:w-80 md:h-80 rounded-full p-2 bg-gradient-to-tr from-cyan-400 to-purple-600 shadow-[0_0_40px_rgba(0,255,255,0.3)]">
             <div className="w-full h-full rounded-full overflow-hidden bg-gray-900 flex justify-center items-center border-4 border-black">
               <img
                 src="/Chandu.png"
@@ -178,13 +180,13 @@ const Hero = () => {
                 delay: item.delay,
                 ease: "easeInOut",
               }}
-              className="absolute glass p-3 rounded-2xl border border-white/10 shadow-lg"
+              className="absolute glass p-2 sm:p-3 rounded-2xl border border-white/10 shadow-lg hidden sm:flex items-center justify-center pointer-events-none"
               style={{
                 top: `calc(50% + ${item.y}px)`,
                 left: `calc(50% + ${item.x}px)`,
               }}
             >
-              <item.Icon size={32} color={item.color} />
+              <item.Icon className="text-2xl md:text-3xl" color={item.color} />
             </motion.div>
           ))}
         </motion.div>

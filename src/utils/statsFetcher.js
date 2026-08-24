@@ -1,106 +1,72 @@
 /**
  * Real-Time Stats Fetcher for GitHub, LeetCode, and CodeChef profiles
+ *
+ * ONLY Real Activity Data:
+ * - GitHub: Pandirichandu
+ * - LeetCode: chandupandiri265
+ * - CodeChef: chandupandiri1
+ *
+ * NO fake, mock, generated, or hardcoded fallback activity dates.
+ * Empty days remain empty. Live APIs populate exact real activity.
  */
 
 const GITHUB_USERNAME = "Pandirichandu";
 const LEETCODE_USERNAME = "chandupandiri265";
 const CODECHEF_USERNAME = "chandupandiri1";
 
-// Helper to convert Unix timestamp or date to YYYY-MM-DD
-function toYYYYMMDD(dateInput) {
-  const d = typeof dateInput === "number" ? new Date(dateInput * 1000) : new Date(dateInput);
-  return d.toISOString().split("T")[0];
+/** Convert Unix timestamp (seconds) or Date to "YYYY-MM-DD" in local time */
+function toYYYYMMDD(input) {
+  const d = typeof input === "number" ? new Date(input * 1000) : new Date(input);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-// 100% Real CodeChef Activity Data parsed from chandupandiri1 profile
-const REAL_CODECHEF_ACTIVITY = {
-  "2024-08-14": 36, "2024-08-21": 4, "2024-08-23": 24, "2024-08-28": 14, "2024-08-30": 50,
-  "2024-09-04": 5, "2024-09-06": 9, "2024-09-11": 9, "2024-09-18": 9, "2024-09-20": 5,
-  "2024-10-04": 11, "2024-10-16": 19, "2024-10-18": 15, "2024-10-25": 24, "2024-11-06": 52,
-  "2024-11-07": 6, "2024-11-13": 7, "2024-11-27": 13, "2024-12-25": 102, "2024-12-29": 19,
-  "2025-01-08": 5, "2025-01-22": 6, "2025-01-29": 5, "2025-02-03": 35, "2025-02-04": 1,
-  "2025-02-10": 53, "2025-04-07": 3, "2025-06-24": 2, "2025-06-27": 8, "2025-07-01": 4,
-  "2025-07-03": 4, "2025-07-09": 4, "2025-07-10": 6, "2025-07-18": 4, "2025-07-19": 3,
-  "2025-07-21": 7, "2025-07-22": 9, "2025-07-23": 5, "2025-07-24": 5, "2025-07-25": 4,
-  "2025-07-28": 4, "2025-07-30": 4, "2025-07-31": 8, "2025-08-01": 23, "2025-08-05": 4,
-  "2025-08-06": 4, "2025-08-07": 20, "2025-08-08": 3, "2025-08-09": 2, "2025-08-10": 4,
-  "2025-08-11": 2, "2025-08-12": 4, "2025-08-13": 5, "2025-08-17": 3, "2025-09-10": 6,
-  "2026-07-07": 41, "2026-07-09": 1, "2026-07-13": 4, "2026-07-26": 3, "2026-07-27": 4,
-  "2026-07-28": 4, "2026-07-29": 4, "2026-08-03": 11, "2026-08-04": 4, "2026-08-07": 28,
-  "2026-08-08": 26, "2026-08-09": 6, "2026-08-10": 6, "2026-08-11": 6
-};
-
-// 100% Real LeetCode Activity Data parsed from chandupandiri265 profile
-const REAL_LEETCODE_ACTIVITY = {
-  "2025-08-13": 1,
-  "2025-08-17": 2,
-  "2025-08-22": 1,
-  "2026-07-07": 3,
-  "2026-07-26": 6,
-  "2026-07-27": 4,
-  "2026-07-28": 2,
-  "2026-07-29": 4,
-  "2026-07-31": 3,
-  "2026-08-02": 2,
-  "2026-08-03": 1,
-  "2026-08-06": 2,
-};
-
-// Generate active dates fallback pattern if needed
-function generateSyntheticActivity(totalSolved = 87, countPerDayMax = 5) {
-  const activityMap = {};
-  const today = new Date();
-  let remaining = totalSolved;
-
-  for (let i = 0; i < 350 && remaining > 0; i += Math.floor(Math.random() * 3) + 1) {
-    const d = new Date(today);
-    d.setDate(today.getDate() - i);
-    const dateStr = d.toISOString().split("T")[0];
-
-    const solvedToday = Math.min(remaining, Math.floor(Math.random() * countPerDayMax) + 1);
-    activityMap[dateStr] = solvedToday;
-    remaining -= solvedToday;
-  }
-  return activityMap;
-}
-
-// Default real live statistics from user profiles
+// ---------------------------------------------------------------------------
+// Initial Clean State — NO hardcoded activity dates
+// ---------------------------------------------------------------------------
 export const DEFAULT_STATS = {
   github: {
-    totalCommits: 120,
+    totalCommits: 91,
     repositories: 19,
     longestStreak: 14,
     currentStreak: 5,
     contributions: [],
-    activityMap: generateSyntheticActivity(120, 6),
+    activityMap: {}, // Empty by default; populated ONLY by live GitHub API
+    activityError: false,
     username: GITHUB_USERNAME,
   },
   leetcode: {
-    totalSolved: 87,
-    easySolved: 69,
-    totalEasy: 958,
-    mediumSolved: 17,
-    totalMedium: 2098,
+    totalSolved: 89,
+    easySolved: 70,
+    totalEasy: 961,
+    mediumSolved: 18,
+    totalMedium: 2105,
     hardSolved: 1,
-    totalHard: 962,
-    ranking: 1804668,
+    totalHard: 967,
+    ranking: 1808653,
     acceptanceRate: "72.4%",
-    activityMap: REAL_LEETCODE_ACTIVITY,
+    activityMap: {}, // Empty by default; populated ONLY by live LeetCode API
+    activityError: false,
     recentSubmissions: [
-      { title: "Smallest Divisible Digit Product I", statusDisplay: "Accepted", lang: "python3", timeAgo: "Recently" },
-      { title: "Reverse Integer", statusDisplay: "Accepted", lang: "python3", timeAgo: "Recently" },
-      { title: "Stone Game", statusDisplay: "Accepted", lang: "python3", timeAgo: "Recently" },
-      { title: "Two Sum", statusDisplay: "Accepted", lang: "python3", timeAgo: "Recently" }
+      { title: "Longest Subsequence With Non-Zero Bitwise XOR", statusDisplay: "Accepted", lang: "python3", timeAgo: "Aug 24" },
+      { title: "Smallest Divisible Digit Product I",             statusDisplay: "Accepted", lang: "python3", timeAgo: "Aug 16" },
+      { title: "Reverse Integer",                                statusDisplay: "Accepted", lang: "python3", timeAgo: "Aug 15" },
+      { title: "Stone Game",                                     statusDisplay: "Accepted", lang: "python3", timeAgo: "Aug 06" },
+      { title: "Two Sum",                                        statusDisplay: "Accepted", lang: "python3", timeAgo: "Aug 03" },
     ],
     username: LEETCODE_USERNAME,
   },
   codechef: {
     currentRating: 1027,
     highestRating: 1110,
-    problemsSolved: 672,
+    problemsSolved: 729,
     stars: "1★",
-    globalRank: "Div 4",
-    activityMap: REAL_CODECHEF_ACTIVITY,
+    globalRank: "134,383",
+    division: "Div 4",
+    activityMap: {}, // Empty by default; populated ONLY by live CodeChef scrape
+    activityError: false,
     username: CODECHEF_USERNAME,
   },
   lastUpdated: null,
@@ -114,21 +80,16 @@ function calculateStreaks(contributionsData) {
     return { longestStreak: 14, currentStreak: 5 };
   }
 
-  const sorted = [...contributionsData].sort(
-    (a, b) => new Date(a.date) - new Date(b.date)
-  );
+  const sorted = [...contributionsData].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  let currentStreak = 0;
   let longestStreak = 0;
   let tempStreak = 0;
+  let currentStreak = 0;
 
-  for (let i = 0; i < sorted.length; i++) {
-    const count = sorted[i].count || 0;
-    if (count > 0) {
+  for (const { count } of sorted) {
+    if ((count || 0) > 0) {
       tempStreak++;
-      if (tempStreak > longestStreak) {
-        longestStreak = tempStreak;
-      }
+      if (tempStreak > longestStreak) longestStreak = tempStreak;
     } else {
       tempStreak = 0;
     }
@@ -136,15 +97,12 @@ function calculateStreaks(contributionsData) {
 
   for (let i = sorted.length - 1; i >= 0; i--) {
     const count = sorted[i].count || 0;
-    const dateObj = new Date(sorted[i].date);
-    const today = new Date();
-    const diffDays = Math.floor((today - dateObj) / (1000 * 60 * 60 * 24));
-    
-    if (diffDays <= 2 && count > 0) {
-      currentStreak++;
-    } else if (diffDays > 2 && count === 0) {
-      break;
-    }
+    const diffDays = Math.floor(
+      (new Date(new Date().toDateString()) - new Date(new Date(sorted[i].date).toDateString())) / 86400000
+    );
+    if (currentStreak === 0 && diffDays <= 1 && count === 0) continue;
+    if (count > 0) currentStreak++;
+    else break;
   }
 
   return {
@@ -154,177 +112,239 @@ function calculateStreaks(contributionsData) {
 }
 
 /**
- * Main fetcher function retrieving live stats from APIs
+ * Main live fetcher function that retrieves 100% genuine real-time data from platforms
  */
 export async function fetchLiveStats() {
   const results = JSON.parse(JSON.stringify(DEFAULT_STATS));
 
-  // 1. Fetch GitHub Live Stats
+  // ── 1. Live GitHub Fetch ───────────────────────────────────────────────────
   try {
     const [ghUserRes, ghContribRes] = await Promise.allSettled([
-      fetch(`https://api.github.com/users/${GITHUB_USERNAME}`),
-      fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`),
+      fetch(`https://api.github.com/users/${GITHUB_USERNAME}`, { signal: AbortSignal.timeout(6000) }),
+      fetch(`https://github-contributions-api.jogruber.de/v4/${GITHUB_USERNAME}?y=last`, { signal: AbortSignal.timeout(6000) }),
     ]);
 
     if (ghUserRes.status === "fulfilled" && ghUserRes.value.ok) {
-      const userData = await ghUserRes.value.json();
-      results.github.repositories = userData.public_repos || results.github.repositories;
+      const u = await ghUserRes.value.json();
+      results.github.repositories = u.public_repos ?? results.github.repositories;
     }
 
     if (ghContribRes.status === "fulfilled" && ghContribRes.value.ok) {
-      const contribData = await ghContribRes.value.json();
-      const totalPastYear = contribData.total?.lastYear || 0;
-      results.github.totalCommits = totalPastYear > 0 ? totalPastYear : results.github.totalCommits;
-      results.github.contributions = contribData.contributions || [];
+      const data = await ghContribRes.value.json();
+      const total = data.total?.lastYear || 0;
+      results.github.totalCommits = total > 0 ? total : results.github.totalCommits;
+      results.github.contributions = data.contributions || [];
 
+      // Normalize real activity data: { "YYYY-MM-DD": count } (only active dates)
       const map = {};
-      (contribData.contributions || []).forEach((c) => {
-        if (c.date && c.count > 0) {
-          map[c.date] = c.count;
+      (data.contributions || []).forEach(({ date, count }) => {
+        if (date && count > 0) {
+          map[date] = count;
         }
       });
-      results.github.activityMap = Object.keys(map).length > 0 ? map : results.github.activityMap;
 
-      const { longestStreak, currentStreak } = calculateStreaks(contribData.contributions);
+      results.github.activityMap = map;
+      results.github.activityError = false;
+
+      const { longestStreak, currentStreak } = calculateStreaks(data.contributions);
       results.github.longestStreak = longestStreak;
       results.github.currentStreak = currentStreak;
+    } else {
+      results.github.activityError = true;
     }
   } catch (err) {
-    console.warn("GitHub live fetch fallback:", err.message);
+    console.warn("GitHub live fetch error:", err.message);
+    results.github.activityError = true;
   }
 
-  // 2. Fetch LeetCode Live Stats
+  // ── 2. Live LeetCode Fetch (GraphQL & Calendar REST endpoints) ─────────────
   try {
-    const lcProxies = [
-      `https://leetcode-api-faisalshohag.vercel.app/${LEETCODE_USERNAME}`,
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://leetcode-api-faisalshohag.vercel.app/${LEETCODE_USERNAME}`)}`,
-      `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://leetcode-api-faisalshohag.vercel.app/${LEETCODE_USERNAME}`)}`,
-    ];
+    let lcActivityFound = false;
 
-    for (const proxyUrl of lcProxies) {
-      try {
-        const lcRes = await fetch(proxyUrl);
-        if (lcRes.ok) {
-          const lcData = await lcRes.json();
-          if (lcData && typeof lcData.totalSolved === "number") {
-            let calendarMap = {};
-            let rawCal = lcData.submissionCalendar;
-
-            if (typeof rawCal === "string") {
-              try {
-                rawCal = JSON.parse(rawCal);
-              } catch {
-                // Ignore invalid JSON format
+    // A. Try direct LeetCode GraphQL
+    try {
+      const query = `
+        query userProfileCalendar($username: String!) {
+          matchedUser(username: $username) {
+            userCalendar {
+              streak
+              totalActiveDays
+              submissionCalendar
+            }
+            submitStats {
+              acSubmissionNum {
+                difficulty
+                count
               }
             }
-
-            if (rawCal && typeof rawCal === "object") {
-              Object.entries(rawCal).forEach(([ts, count]) => {
-                const dateStr = toYYYYMMDD(parseInt(ts));
-                calendarMap[dateStr] = count;
-              });
+            profile {
+              ranking
             }
-
-            if (Object.keys(calendarMap).length === 0) {
-              calendarMap = REAL_LEETCODE_ACTIVITY;
-            }
-
-            results.leetcode = {
-              totalSolved: lcData.totalSolved ?? results.leetcode.totalSolved,
-              easySolved: lcData.easySolved ?? results.leetcode.easySolved,
-              totalEasy: lcData.totalEasy ?? results.leetcode.totalEasy,
-              mediumSolved: lcData.mediumSolved ?? results.leetcode.mediumSolved,
-              totalMedium: lcData.totalMedium ?? results.leetcode.totalMedium,
-              hardSolved: lcData.hardSolved ?? results.leetcode.hardSolved,
-              totalHard: lcData.totalHard ?? results.leetcode.totalHard,
-              ranking: lcData.ranking ?? results.leetcode.ranking,
-              acceptanceRate: lcData.acceptanceRate ? `${lcData.acceptanceRate}%` : "72.4%",
-              activityMap: calendarMap,
-              recentSubmissions: (lcData.recentSubmissions || []).slice(0, 5).map((sub) => ({
-                title: sub.title || "Problem Solved",
-                statusDisplay: sub.statusDisplay || "Accepted",
-                lang: sub.lang || "Python",
-                timeAgo: sub.timestamp
-                  ? new Date(parseInt(sub.timestamp) * 1000).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })
-                  : "Recently",
-              })),
-              username: LEETCODE_USERNAME,
-            };
-            break;
           }
         }
-      } catch {
-        continue;
+      `;
+
+      const gqlRes = await fetch("https://leetcode.com/graphql", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, variables: { username: LEETCODE_USERNAME } }),
+        signal: AbortSignal.timeout(6000),
+      });
+
+      if (gqlRes.ok) {
+        const gqlData = await gqlRes.json();
+        const user = gqlData?.data?.matchedUser;
+        if (user) {
+          const ac = user.submitStats?.acSubmissionNum || [];
+          const allAc = ac.find((x) => x.difficulty === "All")?.count;
+          const easyAc = ac.find((x) => x.difficulty === "Easy")?.count;
+          const medAc = ac.find((x) => x.difficulty === "Medium")?.count;
+          const hardAc = ac.find((x) => x.difficulty === "Hard")?.count;
+
+          if (allAc !== undefined) results.leetcode.totalSolved = allAc;
+          if (easyAc !== undefined) results.leetcode.easySolved = easyAc;
+          if (medAc !== undefined) results.leetcode.mediumSolved = medAc;
+          if (hardAc !== undefined) results.leetcode.hardSolved = hardAc;
+          if (user.profile?.ranking) results.leetcode.ranking = user.profile.ranking;
+
+          let cal = user.userCalendar?.submissionCalendar;
+          if (typeof cal === "string") {
+            try { cal = JSON.parse(cal); } catch {}
+          }
+          if (cal && typeof cal === "object") {
+            const calMap = {};
+            Object.entries(cal).forEach(([ts, count]) => {
+              if (count > 0) {
+                const dateStr = toYYYYMMDD(parseInt(ts, 10));
+                calMap[dateStr] = count;
+              }
+            });
+            results.leetcode.activityMap = calMap;
+            results.leetcode.activityError = false;
+            lcActivityFound = true;
+          }
+        }
+      }
+    } catch {}
+
+    // B. Try dedicated Calendar REST endpoints if GraphQL was blocked by CORS
+    if (!lcActivityFound) {
+      const lcCalendarEndpoints = [
+        `https://alfa-leetcode-api.onrender.com/${LEETCODE_USERNAME}/calendar`,
+        `https://alfa-leetcode-api.onrender.com/userProfile/${LEETCODE_USERNAME}`,
+      ];
+
+      for (const url of lcCalendarEndpoints) {
+        try {
+          const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
+          if (!res.ok) continue;
+          const data = await res.json();
+
+          let rawCal = data.submissionCalendar;
+          if (typeof rawCal === "string") {
+            try { rawCal = JSON.parse(rawCal); } catch { rawCal = null; }
+          }
+
+          if (rawCal && typeof rawCal === "object") {
+            const calMap = {};
+            Object.entries(rawCal).forEach(([ts, count]) => {
+              if (count > 0) {
+                const dateStr = toYYYYMMDD(parseInt(ts, 10));
+                calMap[dateStr] = count;
+              }
+            });
+            results.leetcode.activityMap = calMap;
+            results.leetcode.activityError = false;
+            lcActivityFound = true;
+          }
+
+          if (typeof data.totalSolved === "number") {
+            results.leetcode.totalSolved = data.totalSolved;
+            results.leetcode.easySolved = data.easySolved ?? results.leetcode.easySolved;
+            results.leetcode.mediumSolved = data.mediumSolved ?? results.leetcode.mediumSolved;
+            results.leetcode.hardSolved = data.hardSolved ?? results.leetcode.hardSolved;
+            results.leetcode.ranking = data.ranking ?? results.leetcode.ranking;
+            if (data.acceptanceRate) results.leetcode.acceptanceRate = `${data.acceptanceRate}%`;
+          }
+
+          if (lcActivityFound) break;
+        } catch { continue; }
       }
     }
+
+    if (!lcActivityFound) {
+      results.leetcode.activityError = Object.keys(results.leetcode.activityMap).length === 0;
+    }
   } catch (err) {
-    console.warn("LeetCode live fetch fallback:", err.message);
+    console.warn("LeetCode live fetch error:", err.message);
+    results.leetcode.activityError = true;
   }
 
-  // 3. Fetch CodeChef Live Stats & Dynamic Heatmap Scraper
+  // ── 3. Live CodeChef Fetch ────────────────────────────────────────────────
   try {
+    let ccActivityFound = false;
     const proxies = [
-      `https://api.allorigins.win/raw?url=${encodeURIComponent(`https://www.codechef.com/users/${CODECHEF_USERNAME}`)}`,
+      `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.codechef.com/users/${CODECHEF_USERNAME}`)}`,
       `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://www.codechef.com/users/${CODECHEF_USERNAME}`)}`,
     ];
 
     for (const proxyUrl of proxies) {
       try {
-        const ccRes = await fetch(proxyUrl);
-        if (ccRes.ok) {
-          const html = await ccRes.text();
-          const ratingMatch = html.match(/rating-number[^>]*>(\d+)/i) || html.match(/class="rating-number">(\d+)/i);
-          const highestMatch = html.match(/\(Highest Rating\s*(\d+)\)/i) || html.match(/Highest Rating[^\d]*(\d+)/i);
-          const solvedMatch = html.match(/Fully Solved\s*\(([0-9]+)\)/i) || html.match(/Total Problems Solved[^\d]*(\d+)/i);
-          const dailyMatch = html.match(/var\s+userDailySubmissionsStats\s*=\s*(\[[\s\S]*?\]);/i);
+        const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) continue;
 
-          if (ratingMatch && ratingMatch[1]) {
-            results.codechef.currentRating = parseInt(ratingMatch[1]);
-          }
-          if (highestMatch && highestMatch[1]) {
-            results.codechef.highestRating = parseInt(highestMatch[1]);
-          }
-          if (solvedMatch && solvedMatch[1]) {
-            results.codechef.problemsSolved = parseInt(solvedMatch[1]);
-          }
-
-          if (dailyMatch && dailyMatch[1]) {
-            try {
-              const dailyArray = JSON.parse(dailyMatch[1]);
-              const dynamicMap = {};
-              dailyArray.forEach((item) => {
-                if (item.date && item.value) {
-                  const parts = item.date.split('-');
-                  const year = parts[0];
-                  const month = parts[1].padStart(2, '0');
-                  const day = parts[2].padStart(2, '0');
-                  dynamicMap[`${year}-${month}-${day}`] = item.value;
-                }
-              });
-              if (Object.keys(dynamicMap).length > 0) {
-                results.codechef.activityMap = dynamicMap;
-              }
-            } catch (pe) {
-              console.warn("CodeChef daily json parse error:", pe.message);
-            }
-          }
-          break;
+        const text = await res.text();
+        let html = text;
+        if (text.trimStart().startsWith("{")) {
+          try { html = JSON.parse(text).contents || text; } catch {}
         }
-      } catch {
-        continue;
-      }
+
+        const ratingMatch  = html.match(/rating-number[^>]*>(\d+)/i);
+        const highestMatch = html.match(/\(Highest Rating\s*(\d+)\)/i) || html.match(/Highest Rating[^\d]*(\d+)/i);
+        const solvedMatch  = html.match(/Fully Solved\s*\(([0-9]+)\)/i);
+        const dailyMatch   = html.match(/var\s+userDailySubmissionsStats\s*=\s*(\[[\s\S]*?\]);/i);
+
+        if (ratingMatch?.[1])  results.codechef.currentRating  = parseInt(ratingMatch[1]);
+        if (highestMatch?.[1]) results.codechef.highestRating  = parseInt(highestMatch[1]);
+        if (solvedMatch?.[1])  results.codechef.problemsSolved = parseInt(solvedMatch[1]);
+
+        if (dailyMatch?.[1]) {
+          try {
+            const arr = JSON.parse(dailyMatch[1]);
+            const map = {};
+            arr.forEach(({ date, value }) => {
+              if (date && value > 0) {
+                const parts = date.split("-");
+                if (parts.length === 3) {
+                  const y = parts[0];
+                  const m = parts[1].padStart(2, "0");
+                  const d = parts[2].padStart(2, "0");
+                  map[`${y}-${m}-${d}`] = value;
+                }
+              }
+            });
+            results.codechef.activityMap = map;
+            results.codechef.activityError = false;
+            ccActivityFound = true;
+          } catch (pe) {
+            console.warn("CodeChef calendar parse error:", pe.message);
+          }
+        }
+
+        if (ccActivityFound) break;
+      } catch { continue; }
+    }
+
+    if (!ccActivityFound) {
+      results.codechef.activityError = Object.keys(results.codechef.activityMap).length === 0;
     }
   } catch (err) {
-    console.warn("CodeChef live fetch fallback:", err.message);
+    console.warn("CodeChef live fetch error:", err.message);
+    results.codechef.activityError = true;
   }
 
   results.lastUpdated = new Date().toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
   });
 
   return results;

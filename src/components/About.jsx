@@ -12,6 +12,7 @@ const Counter = ({ from, to, duration = 2, suffix = "" }) => {
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
+    const el = nodeRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
@@ -20,14 +21,18 @@ const Counter = ({ from, to, duration = 2, suffix = "" }) => {
       },
       { threshold: 0.5 },
     );
-    if (nodeRef.current) observer.observe(nodeRef.current);
-    return () => observer.disconnect();
+    if (el) observer.observe(el);
+    return () => {
+      if (el) observer.unobserve(el);
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {
     if (!inView) return;
 
     let startTimestamp = null;
+    let frameId;
     const step = (timestamp) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min(
@@ -36,10 +41,13 @@ const Counter = ({ from, to, duration = 2, suffix = "" }) => {
       );
       setCount(Math.floor(progress * (to - from) + from));
       if (progress < 1) {
-        window.requestAnimationFrame(step);
+        frameId = window.requestAnimationFrame(step);
       }
     };
-    window.requestAnimationFrame(step);
+    frameId = window.requestAnimationFrame(step);
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
   }, [inView, from, to, duration]);
 
   return (

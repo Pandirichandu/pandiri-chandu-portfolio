@@ -222,7 +222,7 @@ const Contact = () => {
                   aria-invalid={!!errors.name && touched.name}
                   aria-describedby={errors.name && touched.name ? "name-error" : undefined}
                   disabled={isSubmitting}
-                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all disabled:opacity-50 ${
+                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:ring-1 transition-all disabled:opacity-50 ${
                     errors.name && touched.name
                       ? "border-red-500/50 focus:border-red-500 focus:ring-red-500"
                       : "border-white/10 focus:border-cyan-400 focus:ring-cyan-400"
@@ -251,7 +251,7 @@ const Contact = () => {
                   aria-invalid={!!errors.email && touched.email}
                   aria-describedby={errors.email && touched.email ? "email-error" : undefined}
                   disabled={isSubmitting}
-                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all disabled:opacity-50 ${
+                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:ring-1 transition-all disabled:opacity-50 ${
                     errors.email && touched.email
                       ? "border-red-500/50 focus:border-purple-500 focus:ring-purple-500"
                       : "border-white/10 focus:border-purple-400 focus:ring-purple-400"
@@ -278,7 +278,7 @@ const Contact = () => {
                   aria-invalid={!!errors.message && touched.message}
                   aria-describedby={errors.message && touched.message ? "message-error" : undefined}
                   disabled={isSubmitting}
-                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-1 transition-all resize-none disabled:opacity-50 ${
+                  className={`w-full bg-gray-900/50 border rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:ring-1 transition-all resize-none disabled:opacity-50 ${
                     errors.message && touched.message
                       ? "border-red-500/50 focus:border-cyan-400 focus:ring-cyan-400"
                       : "border-white/10 focus:border-cyan-400 focus:ring-cyan-400"

@@ -24,13 +24,17 @@ const Navbar = () => {
 
       // Active section highlighting
       const sections = navLinks.map((link) => link.name.toLowerCase());
-      const scrollPosition = window.scrollY + 100;
+      const scrollPosition = window.scrollY + 180;
 
       for (let i = sections.length - 1; i >= 0; i--) {
         const section = document.getElementById(sections[i]);
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveSection(sections[i]);
-          break;
+        if (section) {
+          const rect = section.getBoundingClientRect();
+          const absoluteTop = rect.top + window.scrollY;
+          if (absoluteTop <= scrollPosition) {
+            setActiveSection(sections[i]);
+            break;
+          }
         }
       }
     };
@@ -102,17 +106,17 @@ const Navbar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full left-0 w-full glass bg-black/90 flex flex-col items-center py-8 gap-6 md:hidden border-b border-white/10"
+              className="absolute top-full left-0 w-full glass bg-black/95 max-h-[80vh] overflow-y-auto custom-scrollbar flex flex-col items-center py-6 gap-5 md:hidden border-b border-white/10 shadow-2xl backdrop-blur-2xl"
             >
               {navLinks.map((link) => (
                 <a
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`text-lg font-medium ${
+                  className={`text-base font-medium transition-colors ${
                     activeSection === link.name.toLowerCase()
-                      ? "text-cyan-400"
-                      : "text-gray-300"
+                      ? "text-cyan-400 font-semibold"
+                      : "text-gray-300 hover:text-white"
                   }`}
                 >
                   {link.name}

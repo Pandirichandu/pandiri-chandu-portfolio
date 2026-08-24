@@ -161,13 +161,16 @@ const CodingStats = () => {
               </div>
             </div>
 
-            {/* GitHub 52-Week Heatmap Calendar */}
-            <div className="bg-gray-950/40 rounded-xl p-5 border border-white/5">
+            {/* GitHub 52-Week Heatmap Calendar — real GitHub green palette */}
+            <div className="bg-[#0d1117] rounded-xl p-5 border border-[#30363d]">
               <ActivityHeatmap
                 activityMap={stats.github.activityMap}
-                colorLevels={["#161b22", "#0e3a43", "#007085", "#06b6d4", "#22d3ee"]}
+                isLoading={isRefreshing}
+                isError={stats.github.activityError}
+                colorLevels={["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]}
                 unitName="contributions"
                 totalLabel={`${stats.github.totalCommits}+ contributions in the last year`}
+                platform="github"
               />
             </div>
           </motion.div>
@@ -320,16 +323,19 @@ const CodingStats = () => {
               </div>
             </div>
 
-            {/* Dedicated LeetCode 52-Week Activity Heatmap (Matches GitHub design in Orange) */}
-            <div className="bg-gray-950/40 rounded-xl p-5 border border-white/5 mb-6">
+            {/* LeetCode 52-Week Heatmap — real LeetCode orange palette */}
+            <div className="bg-[#1a1a1a] rounded-xl p-5 border border-[#3c3c3c] mb-6">
               <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-orange-400 uppercase tracking-wider">
-                <FiCalendar /> LeetCode Daily Problem Solving Matrix
+                <FiCalendar /> LeetCode Submission Activity
               </div>
               <ActivityHeatmap
                 activityMap={stats.leetcode.activityMap}
-                colorLevels={["#18130c", "#572702", "#9a3412", "#ea580c", "#f97316"]}
-                unitName="problems solved"
-                totalLabel={`${stats.leetcode.totalSolved} total DSA problems solved on LeetCode`}
+                isLoading={isRefreshing}
+                isError={stats.leetcode.activityError}
+                colorLevels={["#282828", "#7c4a1e", "#b45309", "#d97706", "#f59e0b"]}
+                unitName="submissions"
+                totalLabel={`${stats.leetcode.totalSolved} problems solved on LeetCode`}
+                platform="leetcode"
               />
             </div>
 
@@ -419,10 +425,10 @@ const CodingStats = () => {
                       @{stats.codechef.username} <FiExternalLink size={10} />
                     </a>
                   </div>
-                  <p className="text-gray-400 text-sm mt-1 flex items-center gap-2">
+                  <p className="text-gray-400 text-sm mt-1 flex flex-wrap items-center gap-2">
                     Competitive Programming & Contests
                     <span className="text-[#D2B48C] bg-[#8B4513]/30 px-2 py-0.5 rounded text-xs font-semibold flex items-center gap-1">
-                      <FiAward size={12} /> {stats.codechef.stars} ({stats.codechef.globalRank})
+                      <FiAward size={12} /> {stats.codechef.stars} ({stats.codechef.division || "Div 4"} • Rank #{stats.codechef.globalRank})
                     </span>
                   </p>
                 </div>
@@ -479,16 +485,19 @@ const CodingStats = () => {
               </div>
             </div>
 
-            {/* Dedicated CodeChef 52-Week Activity Heatmap (Matches GitHub design in Bronze/Gold) */}
-            <div className="bg-gray-950/40 rounded-xl p-5 border border-white/5">
-              <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-[#D2B48C] uppercase tracking-wider">
-                <FiCalendar /> CodeChef Contest & Submission Matrix
+            {/* CodeChef 52-Week Heatmap — real CodeChef activity style */}
+            <div className="bg-[#1a1200] rounded-xl p-5 border border-[#3d3000]">
+              <div className="flex items-center gap-2 mb-3 text-xs font-semibold text-yellow-500 uppercase tracking-wider">
+                <FiCalendar /> CodeChef Submission Activity
               </div>
               <ActivityHeatmap
                 activityMap={stats.codechef.activityMap}
-                colorLevels={["#17130b", "#452906", "#854d0e", "#ca8a04", "#eab308"]}
-                unitName="contest problems solved"
+                isLoading={isRefreshing}
+                isError={stats.codechef.activityError}
+                colorLevels={["#2a2000", "#5c3d00", "#926200", "#c98a00", "#ffb700"]}
+                unitName="problems solved"
                 totalLabel={`${stats.codechef.problemsSolved} problems solved on CodeChef`}
+                platform="codechef"
               />
             </div>
           </motion.div>
