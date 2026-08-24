@@ -283,14 +283,15 @@ export async function fetchLiveStats() {
   // ── 3. Live CodeChef Fetch ────────────────────────────────────────────────
   try {
     let ccActivityFound = false;
-    const proxies = [
+    const endpoints = [
+      `/api/codechef/users/${CODECHEF_USERNAME}`,
       `https://api.allorigins.win/get?url=${encodeURIComponent(`https://www.codechef.com/users/${CODECHEF_USERNAME}`)}`,
       `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(`https://www.codechef.com/users/${CODECHEF_USERNAME}`)}`,
     ];
 
-    for (const proxyUrl of proxies) {
+    for (const ep of endpoints) {
       try {
-        const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(5000) });
+        const res = await fetch(ep, { signal: AbortSignal.timeout(6000) });
         if (!res.ok) continue;
 
         const text = await res.text();

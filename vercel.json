@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/codechef/:path*",
+      "destination": "https://www.codechef.com/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
