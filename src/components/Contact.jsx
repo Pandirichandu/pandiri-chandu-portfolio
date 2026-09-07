@@ -155,16 +155,22 @@ const Contact = () => {
       setCooldownTime(COOLDOWN_SECONDS);
       
     } catch (error) {
-      // Show exact error message for debugging
-      let errorMessage = "Failed to send message.";
+      // Show a helpful error message
+      let errorMessage = "Failed to send message. Please try emailing directly.";
       if (error?.text) {
-         errorMessage = `EmailJS Error: ${error.text}`;
+        if (error.text.includes("Invalid grant") || error.text.includes("Gmail_API")) {
+          errorMessage = "Email service is temporarily unavailable. Please reach out at chandupandiri265@gmail.com";
+        } else if (error.text.toLowerCase().includes("account not found")) {
+          errorMessage = "Email service error: Account not found. Please verify your EmailJS Public Key in .env";
+        } else {
+          errorMessage = `Send failed: ${error.text}`;
+        }
       } else if (error?.message) {
-         errorMessage = `Error: ${error.message}`;
+        errorMessage = `Error: ${error.message}`;
       }
-      
-      toast.error(errorMessage, { id: toastId, duration: 6000 });
-      
+
+      toast.error(errorMessage, { id: toastId, duration: 8000 });
+
       if (import.meta.env.DEV) {
         console.error("EmailJS Submission Failed:", error);
       }

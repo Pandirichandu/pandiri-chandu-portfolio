@@ -11,18 +11,19 @@ const Quote = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
+          className="relative inline-block"
         >
-          <span className="text-6xl text-cyan-500/50 font-serif leading-none absolute -top-8 -left-4">
+          <span className="text-6xl text-cyan-500/50 font-serif leading-none absolute -top-6 -left-4 select-none pointer-events-none">
             "
           </span>
-          <h2 className="text-3xl md:text-5xl font-light leading-tight tracking-wide max-w-4xl mx-auto italic text-gray-300">
+          <h2 className="text-3xl md:text-5xl font-light leading-tight tracking-wide max-w-4xl mx-auto italic text-gray-300 px-8">
             Passionate about building scalable systems that combine{" "}
             <span className="text-white font-semibold">AI innovation</span> with{" "}
             <span className="text-cyan-400 font-semibold">
               real-world impact.
             </span>
           </h2>
-          <span className="text-6xl text-purple-500/50 font-serif leading-none absolute -bottom-16 -right-4">
+          <span className="text-6xl text-purple-500/50 font-serif leading-none absolute -bottom-10 -right-4 select-none pointer-events-none">
             "
           </span>
         </motion.div>

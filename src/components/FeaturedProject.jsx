@@ -92,7 +92,7 @@ const FeaturedProject = () => {
             className="lg:col-span-7 relative group perspective-1000 cursor-pointer"
             onClick={() => setIsModalOpen(true)}
           >
-            <div className="glass-card p-2 rounded-2xl border border-white/10 overflow-hidden transform transition-all duration-500 group-hover:rotate-y-2 group-hover:rotate-x-2 group-hover:border-cyan-500/30">
+            <div className="glass-card p-2 rounded-2xl border border-white/10 overflow-hidden transform transition-all duration-500 group-hover:[transform:rotateY(2deg)_rotateX(2deg)] group-hover:border-cyan-500/30">
               <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-center justify-center">
                 <span className="px-6 py-3 bg-black/50 backdrop-blur-md rounded-full border border-white/10 text-white font-medium translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                   View Case Study

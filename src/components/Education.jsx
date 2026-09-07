@@ -51,7 +51,7 @@ const Education = () => {
 
               <div className="mb-6">
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-xs font-mono mb-4 bg-gray-800 border border-gray-700 bg-clip-text text-transparent bg-gradient-to-r ${edu.color}`}
+                  className="inline-block px-3 py-1 rounded-full text-xs font-mono mb-4 bg-white/5 border border-white/10 text-gray-300"
                 >
                   {edu.year}
                 </span>

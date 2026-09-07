@@ -22,17 +22,17 @@ const Navbar = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
 
-      // Active section highlighting
-      const sections = navLinks.map((link) => link.name.toLowerCase());
+      // Active section highlighting using section IDs from hrefs
+      const sectionIds = navLinks.map((link) => link.href.replace("#", ""));
       const scrollPosition = window.scrollY + 180;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i]);
+      for (let i = sectionIds.length - 1; i >= 0; i--) {
+        const section = document.getElementById(sectionIds[i]);
         if (section) {
           const rect = section.getBoundingClientRect();
           const absoluteTop = rect.top + window.scrollY;
           if (absoluteTop <= scrollPosition) {
-            setActiveSection(sections[i]);
+            setActiveSection(sectionIds[i]);
             break;
           }
         }
@@ -67,27 +67,30 @@ const Navbar = () => {
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className={`text-sm font-medium transition-colors relative group ${
-                activeSection === link.name.toLowerCase()
-                  ? "text-cyan-400"
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              {link.name}
-              {activeSection === link.name.toLowerCase() && (
-                <motion.div
-                  layoutId="activeNav"
-                  className="absolute -bottom-2 left-0 right-0 h-[2px] bg-cyan-400"
-                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                />
-              )}
-              <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-50" />
-            </a>
-          ))}
+          {navLinks.map((link) => {
+            const sectionId = link.href.replace("#", "");
+            return (
+              <a
+                key={link.name}
+                href={link.href}
+                className={`text-sm font-medium transition-colors relative group ${
+                  activeSection === sectionId
+                    ? "text-cyan-400"
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                {link.name}
+                {activeSection === sectionId && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute -bottom-2 left-0 right-0 h-[2px] bg-cyan-400"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
+                <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-white transition-all duration-300 group-hover:w-full opacity-0 group-hover:opacity-50" />
+              </a>
+            );
+          })}
         </nav>
 
         {/* Mobile Menu Toggle */}
@@ -108,20 +111,23 @@ const Navbar = () => {
               transition={{ duration: 0.2 }}
               className="absolute top-full left-0 w-full glass bg-black/95 max-h-[80vh] overflow-y-auto custom-scrollbar flex flex-col items-center py-6 gap-5 md:hidden border-b border-white/10 shadow-2xl backdrop-blur-2xl"
             >
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className={`text-base font-medium transition-colors ${
-                    activeSection === link.name.toLowerCase()
-                      ? "text-cyan-400 font-semibold"
-                      : "text-gray-300 hover:text-white"
-                  }`}
-                >
-                  {link.name}
-                </a>
-              ))}
+              {navLinks.map((link) => {
+                const sectionId = link.href.replace("#", "");
+                return (
+                  <a
+                    key={link.name}
+                    href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`text-base font-medium transition-colors ${
+                      activeSection === sectionId
+                        ? "text-cyan-400 font-semibold"
+                        : "text-gray-300 hover:text-white"
+                    }`}
+                  >
+                    {link.name}
+                  </a>
+                );
+              })}
             </motion.div>
           )}
         </AnimatePresence>

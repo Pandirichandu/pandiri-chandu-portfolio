@@ -61,16 +61,18 @@ const ParticleBackground = () => {
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    window.addEventListener("resize", () => {
+    const handleResize = () => {
       resize();
       init();
-    });
+    };
+
+    window.addEventListener("resize", handleResize);
 
     init();
     animate();
 
     return () => {
-      window.removeEventListener("resize", resize);
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

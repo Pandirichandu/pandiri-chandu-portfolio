@@ -11,21 +11,22 @@ const Preloader = () => {
 
     const timer = setInterval(() => {
       setProgress((prev) => {
-        if (prev >= 100) {
+        const next = prev + Math.floor(Math.random() * 15) + 5;
+        if (next >= 100) {
           clearInterval(timer);
           setTimeout(() => {
             setIsLoading(false);
-            document.body.style.overflow = "unset";
+            document.body.style.overflow = "";
           }, 800); // Wait a bit at 100%
           return 100;
         }
-        return prev + Math.floor(Math.random() * 15) + 5;
+        return next;
       });
     }, 120);
 
     return () => {
       clearInterval(timer);
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
     };
   }, []);
 
